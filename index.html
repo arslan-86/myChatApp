@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <link rel="stylesheet" href="./public/style.css"> -->
+     <style>
+        body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f1f1f1;
+}
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    max-width: 50%;
+    /* border-radius: ; */
+    margin: auto;
+}
+.chat-header {
+    /* background-color: #075E54; */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: black;
+    padding: 15px;
+    text-align: center;
+    font-size: 24px;
+}
+.message-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+    background-color: white;
+    border-radius: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.message {
+    max-width: 80%;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: #fff;
+    margin: 5px 0;
+}
+.message.messageUser {
+    background-color: #dcf8c6;
+    align-self: flex-end;
+}
+
+.message.bot {
+    background-color: antiquewhite;
+    align-self: flex-start;
+}
+.chat-input {
+    display: flex;
+    padding: 10px;
+    /* background-color: #ffffff; */
+    /* border-top: 1px solid #ddd; */
+}
+.chat-input input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    margin-right: 10px;
+    font-size: 16px;
+    outline: #075E54;
+}
+
+.chat-input button {
+    background-color: #075E54;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 16px;
+}
+.chat-input button:hover {
+    background-color: #128C7E;
+}
+     </style>
+    <title>My Chat App</title>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            My Chat App
+        </div>
+        <div class="message-container" id="msgContainer">
+            <!-- <div class="message bot">
+                Hello! How can I help you today?
+            </div>
+            <div class="message messageUser">
+                I need some help with my account.
+            </div>
+            <div class="message bot">
+                Sure! Can you provide more details about the issue?
+            </div> -->
+        </div>
+        <div class="chat-input">
+            <input type="text" id="input" placeholder="Type a message" />
+            <button id="btn">Send</button>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const button = document.getElementById('btn');
+        const input = document.getElementById('input')
+        const msgContainer = document.getElementById('msgContainer')
+        button.addEventListener('click', () => {
+            if(input.value === ''){
+                return;
+            }
+
+            const newDiv = document.createElement('div');
+            newDiv.classList.add('message', 'messageUser');
+            newDiv.textContent = input.value;
+            msgContainer.appendChild(newDiv)
+
+            socket.emit('message', input.value)
+            input.value = '';
+        })
+
+        socket.on('message', (message) => {
+            const newDiv = document.createElement('div');
+            newDiv.classList.add('message', 'bot');
+            newDiv.textContent = message;
+            msgContainer.appendChild(newDiv)
+            console.log(message)
+        })
+
+    </script>
+</body>
+</html>
